@@ -54,10 +54,9 @@ def GrabCommute(origin,destination)
   $CommuteDateTimeMorning = CurrentDateTimeMorning+NextMonday
   $CommuteDateTimeEvening = CurrentDateTimeEvening+NextMonday
 end
-
 #this works https://maps.googleapis.com/maps/api/directions/json?origin=Plano+TX&destination=Richardson+TX&departure_time=1503405000&mode=driving&key=AIzaSyDUJJHLXCEebThDcAy9eZu29UoOvfFUtX0&avoid=tolls&traffic_model=pessimistic
 
-while option != 6 do
+while option != "6" do
   system "clear"
   puts "---------------------------------------------"
   puts "Current Origin:        #{$origin.capitalize}"
@@ -73,24 +72,24 @@ while option != 6 do
   puts "5: Routing Options"
   puts "6: Quit"
   puts "---------------------------------------------"
-  option=Integer(gets.chomp())
+  option = gets.chomp()
   case option
-  when 1
+  when "1"
     system "clear"
     puts "Change Home Address"
     puts "---------------------------------------------"
     puts "Enter Home Address "
     puts "---------------------------------------------"
     $origin= gets.chomp()
-  when 2
+  when "2"
     system "clear"
     puts "Change Work Address"
     puts "---------------------------------------------"
     puts "Enter Work Address"
     $destination=gets.chomp()
-  when 3
+  when "3"
     GrabCommute($origin,$destination)
-  when 4
+  when "4"
     system "clear"
     puts "Directions"
     puts "---------------------------------------------"
@@ -104,7 +103,7 @@ while option != 6 do
     puts "---------------------------------------------"
     puts "Press ENTER to return to the main menu"
     gets.chomp()
-  when 5
+  when "5"
     system "clear"
     puts "---------------------------------------------"
     puts "Current Routing Options"
@@ -155,7 +154,7 @@ while option != 6 do
       end
       puts "your route will avoid #{$avoid.capitalize}"
     end
-  when 6
+  when "6"
     system "clear"
   end
 # Commute time

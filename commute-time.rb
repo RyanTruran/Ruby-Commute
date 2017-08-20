@@ -21,30 +21,41 @@ CurrentDateTimeEvening = DateTime.new(CurrentYear,CurrentMonth,CurrentDay,16,30,
 CommuteDateTimeEvening = CurrentDateTimeEvening+NextMonday
 EpochDateTime = DateTime.new(1970,1,1) #Epoch Time
 option=0
+$index=0
 CommuteDateTimeEvening.strftime("%a at %l:%M %p")
 EpochDateTime.strftime("%a at %l:%M %p")
 def GrabCommute(origin,destination)
   system "clear"
   puts "From #{origin} To #{destination}"
   puts "---------------------------------------------"
-  puts "#{CommuteDateTimeMorning.strftime("%a at %l:%M %p")}"
-  resourceMorning = RestClient.get 'https://maps.googleapis.com/maps/api/directions/json', {params:{key:$key, origin: origin,destination: destination,departure_time: ((CommuteDateTimeMorning-EpochDateTime)*24*60*60).to_i, mode: "driving", traffic_model: $traffic_model, avoid: $avoid}}
-  hashMorning = JSON.parse(resourceMorning.body)
-  puts "---------------------------------------------"
-  puts "You will travel a distance of #{hashMorning["routes"][0]["legs"][0]["distance"]["text"]}"
-  puts "Without traffic your commute would be #{hashMorning["routes"][0]["legs"][0]["duration"]["text"]}"
-  puts "With Traffic your commute would be #{hashMorning["routes"][0]["legs"][0]["duration_in_traffic"]["text"]}"
-  puts "---------------------------------------------"
-  puts "#{CommuteDateTimeEvening.strftime("%a at %l:%M %p")}"
-  resourceEvening = RestClient.get 'https://maps.googleapis.com/maps/api/directions/json', {params:{key:$key, origin: origin,destination: destination,departure_time: ((CommuteDateTimeEvening-EpochDateTime)*24*60*60).to_i, mode: "driving", traffic_model: $traffic_model, avoid: $avoid}}
-  hashEvening = JSON.parse(resourceEvening.body)
-  puts "---------------------------------------------"
-  puts "You will travel a distance of #{hashEvening["routes"][0]["legs"][0]["distance"]["text"]}"
-  puts "Without traffic your commute would be #{hashEvening["routes"][0]["legs"][0]["duration"]["text"]}"
-  puts "With Traffic your commute would be #{hashEvening["routes"][0]["legs"][0]["duration_in_traffic"]["text"]}"
+  5.times do
+    puts "#{CommuteDateTimeMorning.strftime("%a at %l:%M %p")}"
+    resourceMorning = RestClient.get 'https://maps.googleapis.com/maps/api/directions/json', {params:{key:$key, origin: origin,destination: destination,departure_time: ((CommuteDateTimeMorning-EpochDateTime+$index)*24*60*60).to_i, mode: "driving", traffic_model: $traffic_model, avoid: $avoid}}
+    hashMorning = JSON.parse(resourceMorning.body)
+    puts "---------------------------------------------"
+    puts "You will travel a distance of #{hashMorning["routes"][0]["legs"][0]["distance"]["text"]}"
+    puts "Without traffic your commute would be #{hashMorning["routes"][0]["legs"][0]["duration"]["text"]}"
+    puts "With Traffic your commute would be #{hashMorning["routes"][0]["legs"][0]["duration_in_traffic"]["text"]}"
+    puts "---------------------------------------------"
+    puts "#{CommuteDateTimeEvening.strftime("%a at %l:%M %p")}"
+    resourceEvening = RestClient.get 'https://maps.googleapis.com/maps/api/directions/json', {params:{key:$key, origin: origin,destination: destination,departure_time: ((CommuteDateTimeEvening-EpochDateTime+$index)*24*60*60).to_i, mode: "driving", traffic_model: $traffic_model, avoid: $avoid}}
+    hashEvening = JSON.parse(resourceEvening.body)
+    puts "---------------------------------------------"
+    puts "You will travel a distance of #{hashEvening["routes"][0]["legs"][0]["distance"]["text"]}"
+    puts "Without traffic your commute would be #{hashEvening["routes"][0]["legs"][0]["duration"]["text"]}"
+    puts "With Traffic your commute would be #{hashEvening["routes"][0]["legs"][0]["duration_in_traffic"]["text"]}"
+    puts "---------------------------------------------"
+    if $index<4
+      puts "------------------------------------------------------------------------------------------------"
+      puts "NEXTDAY"
+      puts "------------------------------------------------------------------------------------------------"
+    end
+    $index+=1
+  end
   puts "---------------------------------------------"
   puts "Press ENTER to return to the main menu"
   gets.chomp
+
 end
 
 #this works https://maps.googleapis.com/maps/api/directions/json?origin=Plano+TX&destination=Richardson+TX&departure_time=1503405000&mode=driving&key=AIzaSyDUJJHLXCEebThDcAy9eZu29UoOvfFUtX0&avoid=tolls&traffic_model=pessimistic
@@ -52,10 +63,10 @@ end
 while option != 6 do
   system "clear"
   puts "---------------------------------------------"
-  puts "Current Origin:      #{$origin}"
-  puts "Current Destination: #{$destination}"
+  puts "Current Origin:      #{$origin.capitalize}"
+  puts "Current Destination: #{$destination.capitalize}"
   puts "Current Traffic Model: #{$traffic_model.capitalize}"
-  puts "Current Restrictions: #{$avoid.capitalize}" 
+  puts "Current Restrictions: #{$avoid.capitalize}"
 
   puts "---------------------------------------------"
   puts "1: Change Home Address"
@@ -101,8 +112,8 @@ while option != 6 do
     puts "---------------------------------------------"
     puts "Current Routing Options"
     puts "---------------------------------------------"
-    puts "1. Traffic Model: #{$traffic_model}"
-    puts "2. Avoids: #{$avoid}"
+    puts "1. Traffic Model: #{$traffic_model.capitalize}"
+    puts "2. Avoids: #{$avoid.capitalize}"
     puts "---------------------------------------------"
     puts "Enter the option number that you would like to change"
 
@@ -145,10 +156,8 @@ while option != 6 do
       when "5"
         $avoid = "none"
       end
-      puts "your route will avoid #{$avoid}"
+      puts "your route will avoid #{$avoid.capitalize}"
     end
-    puts "Press ENTER to return to the main menu"
-    gets.chomp()
   when 6
     system "clear"
   end

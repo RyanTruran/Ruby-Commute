@@ -51,7 +51,8 @@ def GrabCommute(origin,destination)
   puts "---------------------------------------------"
   puts "Press ENTER to return to the main menu"
   gets.chomp
-
+  $CommuteDateTimeMorning = CurrentDateTimeMorning+NextMonday
+  $CommuteDateTimeEvening = CurrentDateTimeEvening+NextMonday
 end
 
 #this works https://maps.googleapis.com/maps/api/directions/json?origin=Plano+TX&destination=Richardson+TX&departure_time=1503405000&mode=driving&key=AIzaSyDUJJHLXCEebThDcAy9eZu29UoOvfFUtX0&avoid=tolls&traffic_model=pessimistic
@@ -59,10 +60,10 @@ end
 while option != 6 do
   system "clear"
   puts "---------------------------------------------"
-  puts "Current Origin:      #{$origin.capitalize}"
-  puts "Current Destination: #{$destination.capitalize}"
+  puts "Current Origin:        #{$origin.capitalize}"
+  puts "Current Destination:   #{$destination.capitalize}"
   puts "Current Traffic Model: #{$traffic_model.capitalize}"
-  puts "Current Restrictions: #{$avoid.capitalize}"
+  puts "Current Restrictions:  #{$avoid.capitalize}"
 
   puts "---------------------------------------------"
   puts "1: Change Home Address"

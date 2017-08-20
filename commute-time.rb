@@ -16,41 +16,37 @@ CurrentMonth = CurrentDate.mon
 CurrentDay = CurrentDate.mday
 NextMonday = 7-CurrentDate.cwday+1
 CurrentDateTimeMorning = DateTime.new(CurrentYear,CurrentMonth,CurrentDay,7,30,0,Rational(-5,24)) #Year, Month, Day, Hour, Minute, Second, RATIONAL(Offset from UTC, 24 Hour Days)
-CommuteDateTimeMorning = CurrentDateTimeMorning+NextMonday
+$CommuteDateTimeMorning = CurrentDateTimeMorning+NextMonday
 CurrentDateTimeEvening = DateTime.new(CurrentYear,CurrentMonth,CurrentDay,16,30,0,Rational(-5,24)) #Year, Month, Day, Hour, Minute, Second, RATIONAL(Offset from UTC, 24 Hour Days)
-CommuteDateTimeEvening = CurrentDateTimeEvening+NextMonday
+$CommuteDateTimeEvening = CurrentDateTimeEvening+NextMonday
 EpochDateTime = DateTime.new(1970,1,1) #Epoch Time
 option=0
 $index=0
-CommuteDateTimeEvening.strftime("%a at %l:%M %p")
+$CommuteDateTimeEvening.strftime("%a at %l:%M %p")
 EpochDateTime.strftime("%a at %l:%M %p")
 def GrabCommute(origin,destination)
   system "clear"
   puts "From #{origin} To #{destination}"
   puts "---------------------------------------------"
   5.times do
-    puts "#{CommuteDateTimeMorning.strftime("%a at %l:%M %p")}"
-    resourceMorning = RestClient.get 'https://maps.googleapis.com/maps/api/directions/json', {params:{key:$key, origin: origin,destination: destination,departure_time: ((CommuteDateTimeMorning-EpochDateTime+$index)*24*60*60).to_i, mode: "driving", traffic_model: $traffic_model, avoid: $avoid}}
+    puts "#{$CommuteDateTimeMorning.strftime("%a at %l:%M %p")}"
+    resourceMorning = RestClient.get 'https://maps.googleapis.com/maps/api/directions/json', {params:{key:$key, origin: origin,destination: destination,departure_time: (($CommuteDateTimeMorning-EpochDateTime)*24*60*60).to_i, mode: "driving", traffic_model: $traffic_model, avoid: $avoid}}
     hashMorning = JSON.parse(resourceMorning.body)
     puts "---------------------------------------------"
     puts "You will travel a distance of #{hashMorning["routes"][0]["legs"][0]["distance"]["text"]}"
     puts "Without traffic your commute would be #{hashMorning["routes"][0]["legs"][0]["duration"]["text"]}"
     puts "With Traffic your commute would be #{hashMorning["routes"][0]["legs"][0]["duration_in_traffic"]["text"]}"
     puts "---------------------------------------------"
-    puts "#{CommuteDateTimeEvening.strftime("%a at %l:%M %p")}"
-    resourceEvening = RestClient.get 'https://maps.googleapis.com/maps/api/directions/json', {params:{key:$key, origin: origin,destination: destination,departure_time: ((CommuteDateTimeEvening-EpochDateTime+$index)*24*60*60).to_i, mode: "driving", traffic_model: $traffic_model, avoid: $avoid}}
+    puts "#{$CommuteDateTimeEvening.strftime("%a at %l:%M %p")}"
+    resourceEvening = RestClient.get 'https://maps.googleapis.com/maps/api/directions/json', {params:{key:$key, origin: origin,destination: destination,departure_time: (($CommuteDateTimeEvening-EpochDateTime)*24*60*60).to_i, mode: "driving", traffic_model: $traffic_model, avoid: $avoid}}
     hashEvening = JSON.parse(resourceEvening.body)
     puts "---------------------------------------------"
     puts "You will travel a distance of #{hashEvening["routes"][0]["legs"][0]["distance"]["text"]}"
     puts "Without traffic your commute would be #{hashEvening["routes"][0]["legs"][0]["duration"]["text"]}"
     puts "With Traffic your commute would be #{hashEvening["routes"][0]["legs"][0]["duration_in_traffic"]["text"]}"
     puts "---------------------------------------------"
-    if $index<4
-      puts "------------------------------------------------------------------------------------------------"
-      puts "NEXTDAY"
-      puts "------------------------------------------------------------------------------------------------"
-    end
-    $index+=1
+    $CommuteDateTimeEvening+=1
+    $CommuteDateTimeMorning+=1
   end
   puts "---------------------------------------------"
   puts "Press ENTER to return to the main menu"
@@ -97,7 +93,7 @@ while option != 6 do
     system "clear"
     puts "Directions"
     puts "---------------------------------------------"
-    resourceMorning = RestClient.get 'https://maps.googleapis.com/maps/api/directions/json', {params:{key:$key, origin: $origin, destination: $destination,departure_time: ((CommuteDateTimeMorning-EpochDateTime)*24*60*60).to_i, mode: "driving", traffic_model: $traffic_model, avoid: $avoid}}
+    resourceMorning = RestClient.get 'https://maps.googleapis.com/maps/api/directions/json', {params:{key:$key, origin: $origin, destination: $destination,departure_time: (($CommuteDateTimeMorning-EpochDateTime)*24*60*60).to_i, mode: "driving", traffic_model: $traffic_model, avoid: $avoid}}
     hashMorning = JSON.parse(resourceMorning.body)
     hashMorning["routes"][0]["legs"][0]["steps"].each do |step|
        puts "#{step["html_instructions"].gsub(%r{</?[^>]+?>}, '')} for #{step["distance"]["text"]}"
@@ -161,6 +157,5 @@ while option != 6 do
   when 6
     system "clear"
   end
-
 # Commute time
 end

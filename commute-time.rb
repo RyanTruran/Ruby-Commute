@@ -2,14 +2,14 @@ require 'rest-client'
 require 'json'
 require 'date'
 
-$key = "AIzaSyDUJJHLXCEebThDcAy9eZu29UoOvfFUtX0"
-$destination="300 W. Renner Road Richardson TX"
-$origin="1738 Big Canyon Trl Carrollton"
-$traffic_model="pessimistic"
-$avoid="tolls"
+#User setup
+$key = "AIzaSyDUJJHLXCEebThDcAy9eZu29UoOvfFUtX0"  #Google Maps API Key
+$destination="300 W. Renner Road Richardson TX"   #Default Destination
+$origin="1738 Big Canyon Trl Carrollton"          #Default Origin
+$traffic_model="pessimistic"                      #Traffic Model, you should read about it on the google maps api documentation.
+$avoid="tolls"                                    #Google Maps API Avoid Options
 
-#Get Current Date and Time, Determine Day of week, Add days to reach specified day of the week.
-
+#Get Current Date and Time, Determine Day of week, Add days to reach specified day of the week. This entire block ensures that the model is always looking forward.
 CurrentDate = Date.today()
 CurrentYear = CurrentDate.year
 CurrentMonth = CurrentDate.mon
@@ -20,6 +20,8 @@ $CommuteDateTimeMorning = CurrentDateTimeMorning+NextMonday
 CurrentDateTimeEvening = DateTime.new(CurrentYear,CurrentMonth,CurrentDay,16,30,0,Rational(-5,24)) #Year, Month, Day, Hour, Minute, Second, RATIONAL(Offset from UTC, 24 Hour Days)
 $CommuteDateTimeEvening = CurrentDateTimeEvening+NextMonday
 EpochDateTime = DateTime.new(1970,1,1) #Epoch Time
+
+#interface
 option=0
 $index=0
 $CommuteDateTimeEvening.strftime("%a at %l:%M %p")
